@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISS Location Map</title>
+</head>
+<body>
+    <iframe id="mapIframe" src="https://maps.google.com/maps?q=35.856737, 10.606619&z=1&output=embed" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+    
+</body>
+    <script>
+        // Create WebSocket connection.
+        const socket = new WebSocket('ws://localhost:3000');
+
+        // Connection opened
+        socket.addEventListener('open', function (event) {
+            console.log('Connected to web socket server')
+            sendSms();
+        });
+
+        // Listen for messages
+        socket.addEventListener('message', function (event) {
+            getIssPosition();
+        });
+
+        function sendSms() {
+            socket.send('Ping location');
+        }
+
+        function getIssPosition() {
+           fetch('https://api.wheretheiss.at/v1/satellites/25544')
+           .then(response => {
+               return response.json()
+           })
+           .then(issData => {
+               console.log(issData);
+               if(issData) {
+                   const iframe = document.getElementById('mapIframe');
+                   iframe.src = `https://maps.google.com/maps?q=${issData.latitude}, ${issData.longitude}&z=15&output=embed`;
+               }
+           })
+           .catch(error => {
+               console.log(error);
+           })
+        }
+    </script>
+</html>
