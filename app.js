@@ -25,7 +25,7 @@ app.get('/home', (req, res) => {
     res.sendFile(path.join(__dirname, '/index.html'));
 })
 
-server.listen(3000, () => {
+server.listen(4000, () => {
     console.log('Server is starting at 3000 .......!!!');
 })
 
